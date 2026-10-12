@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="dark light">
+<title>Mon niveau de stress perçu - Exercice 1</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --bg:#15161C; --surface:#1E2029; --surface2:#262935; --text:#E8EAF0; --muted:#A2A7B8;
+  --border:#343848; --accent:#6FB4E8; --on-accent:#15161C; --shadow:0 1px 3px rgba(0,0,0,.5);
+  --soft:rgba(255,255,255,.10); --soft:color-mix(in srgb, var(--accent) 20%, transparent);
+}
+:root[data-theme="light"]{
+  --bg:#FFFFFF; --surface:#F4F6F9; --surface2:#ECEEF1; --text:#33334D; --muted:#55556E;
+  --border:#D4DCE4; --accent:#0564AE; --on-accent:#FFFFFF; --shadow:0 1px 3px rgba(51,51,77,.12);
+  --soft:rgba(5,100,174,.10); --soft:color-mix(in srgb, var(--accent) 14%, transparent);
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#FFFFFF; --surface:#F4F6F9; --surface2:#ECEEF1; --text:#33334D; --muted:#55556E;
+    --border:#D4DCE4; --accent:#0564AE; --on-accent:#FFFFFF; --shadow:0 1px 3px rgba(51,51,77,.12);
+    --soft:rgba(5,100,174,.10); --soft:color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:17px;line-height:1.5;overflow-x:hidden}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px 120px}
+header.top{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--border)}
+header.top .in{max-width:720px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.kicker{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);font-weight:700}
+header.top h1{font-size:16px;margin:2px 0 0;font-weight:700;line-height:1.25}
+.prog{margin-left:auto;text-align:right;flex:0 0 auto}
+.prog b{font-size:17px;font-variant-numeric:tabular-nums}
+.prog span{display:block;font-size:11px;color:var(--muted)}
+.bar{height:3px;background:var(--border)}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:16px;margin:16px 0;box-shadow:var(--shadow)}
+.card h2{margin:0 0 8px;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.card.warn{border-color:var(--accent);background:var(--soft)}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+.chip{background:var(--surface2);border:1px solid var(--border);border-radius:999px;
+  padding:5px 12px;font-size:13px;color:var(--muted)}
+ul.cons{margin:0;padding-left:20px}
+ul.cons li{margin:5px 0}
+.legend{position:sticky;top:var(--stick,58px);z-index:15;background:var(--bg);
+  border-bottom:1px solid var(--border);padding:7px 0;margin:0 -16px 4px;}
+.legend .in{display:flex;gap:6px;padding:0 16px;font-size:11px;color:var(--muted);
+  max-width:720px;margin:0 auto}
+.legend .in span{flex:1 1 0;text-align:center;line-height:1.2}
+.res{scroll-margin-top:12px}
+body.done .legend{display:none}
+.grp{margin:26px 0 8px;font-size:14px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--accent)}
+.q{border-bottom:1px solid var(--border);padding:14px 0}
+.q .lbl{display:flex;gap:10px;margin-bottom:10px}
+.q .n{flex:0 0 auto;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;min-width:1.6em}
+.opts{display:flex;gap:6px}
+.opts button{flex:1 1 0;min-height:46px;border:1.5px solid var(--border);background:var(--surface);
+  color:var(--text);border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;
+  font-variant-numeric:tabular-nums;padding:4px 2px;-webkit-tap-highlight-color:transparent}
+.opts button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.opts.wide button{min-height:40px;font-size:14px}
+.chosen{font-size:13px;color:var(--muted);margin-top:7px;min-height:1.1em}
+.poles{display:flex;justify-content:space-between;gap:10px;font-size:13px;margin-bottom:9px}
+.poles b{font-weight:600}
+.poles .r{text-align:right;color:var(--accent)}
+.go{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--bg);
+  border-top:1px solid var(--border);padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+.go .in{max-width:720px;margin:0 auto}
+.go button{width:100%;min-height:52px;border:0;border-radius:12px;background:var(--accent);
+  color:var(--on-accent);font-size:17px;font-weight:700;cursor:pointer}
+.go button:disabled{background:var(--surface2);color:var(--muted);cursor:not-allowed}
+.res{display:none}
+.res.on{display:block}
+.score{text-align:center;padding:22px 16px}
+.score .big{font-size:56px;font-weight:800;line-height:1;color:var(--accent);
+  font-variant-numeric:tabular-nums}
+.score .sur{font-size:15px;color:var(--muted);margin-top:6px}
+.score .pal{font-size:21px;font-weight:700;margin-top:14px}
+.subs{display:flex;flex-direction:column;gap:10px}
+.sub{display:flex;align-items:center;gap:12px}
+.sub .nm{flex:0 0 42%;font-size:14px}
+.sub .tr{flex:1 1 auto;height:12px;background:var(--surface2);border-radius:999px;overflow:hidden}
+.sub .tr i{display:block;height:100%;background:var(--accent);border-radius:999px}
+.sub .vl{flex:0 0 auto;font-weight:700;font-variant-numeric:tabular-nums;min-width:3.2em;text-align:right}
+.scale{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px}
+.prof{margin:10px 0}
+.prof .ln{display:flex;align-items:center;gap:8px;font-size:12px;margin:9px 0}
+.prof .ln .a{flex:0 0 30%;text-align:right;color:var(--muted)}
+.prof .ln .b{flex:0 0 30%;color:var(--muted)}
+.prof .tr{flex:1 1 auto;position:relative;height:22px}
+.prof .tr .ax{position:absolute;top:10px;left:0;right:0;height:2px;background:var(--border)}
+.prof .tr .d{position:absolute;top:4px;width:14px;height:14px;border-radius:50%;
+  background:var(--accent);transform:translateX(-7px)}
+.prof .tr .d.old{background:transparent;border:2px solid var(--muted)}
+.again{display:block;width:100%;min-height:48px;margin-top:8px;border:1.5px solid var(--border);
+  background:var(--surface);color:var(--text);border-radius:12px;font-size:16px;cursor:pointer}
+.seg{display:flex;gap:6px;margin-top:12px}
+.seg button{flex:1 1 0;min-height:42px;border:1.5px solid var(--border);background:var(--surface);
+  color:var(--text);border-radius:10px;font-size:14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+footer{border-top:1px solid var(--border);margin-top:28px;padding:18px 0;font-size:12px;color:var(--muted)}
+footer p{margin:5px 0}
+.tog{position:fixed;right:12px;bottom:82px;z-index:40;border:1px solid var(--border);
+  background:var(--surface);color:var(--text);border-radius:999px;width:44px;height:44px;
+  font-size:19px;line-height:1;cursor:pointer;box-shadow:var(--shadow);opacity:.92;padding:0}
+.tog:hover,.tog:focus{opacity:1}
+a{color:var(--accent)}
+.idx{display:block;text-decoration:none;color:inherit}
+.idx .card{transition:border-color .15s}
+.idx:hover .card,.idx:focus .card{border-color:var(--accent)}
+.idx h3{margin:0 0 4px;font-size:18px}
+@media print{
+  :root{--bg:#fff;--surface:#fff;--surface2:#f2f2f2;--text:#000;--muted:#444;--border:#bbb;
+    --accent:#000;--on-accent:#fff;--soft:#f2f2f2;--shadow:none}
+  .tog,.go,header.top,.legend{display:none !important}
+  body{font-size:12pt}
+}
+</style>
+<script>
+(function(){try{var t=localStorage.getItem('ef-theme');
+if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();
+</script>
+</head>
+<body>
+<header class="top"><div class="in"><div><div class="kicker">Exercice 1</div><h1>Mon niveau de stress perçu</h1></div><div class="prog"><b id="pc">0</b><span>sur 10</span></div></div><div class="bar"><i id="pb"></i></div></header><div class="wrap"><div class="card"><h2>Ce que ce test mesure</h2><p>Ce test mesure la façon dont vous percevez les situations de votre vie : imprévisibles, incontrôlables, pénibles. Il ne mesure pas les événements eux-mêmes, mais votre perception de ces événements.</p><div class="meta"><span class="chip">10 min</span><span class="chip">Livret page 3</span><span class="chip">Individuel, en silence</span></div></div><div class="card"><h2>Comment répondre</h2><ul class="cons"><li>Répondez le plus spontanément possible : la première réponse est la bonne.</li><li>Une seule réponse par question.</li><li>Certaines questions se ressemblent, mais elles sont différentes. Lisez-les jusqu'au bout.</li><li>Toutes les questions portent sur le dernier mois.</li></ul></div><div class="legend"><div class="in"><span><b>0</b><br>Jamais</span><span><b>1</b><br>Presque jamais</span><span><b>2</b><br>Parfois</span><span><b>3</b><br>Assez souvent</span><span><b>4</b><br>Très souvent</span></div></div><p style="margin:14px 0 0;font-style:italic;color:var(--muted)">Au cours du dernier mois...</p><div class="q" data-q="1"><div class="lbl"><span class="n">1</span><span>combien de fois avez-vous été bouleversé à cause de quelque chose qui s'est produit de manière inattendue ?</span></div><div class="opts" role="group"><button type="button" data-v="0" aria-pressed="false" aria-label="0 - Jamais">0</button><button type="button" data-v="1" aria-pressed="false" aria-label="1 - Presque jamais">1</button><button type="button" data-v="2" aria-pressed="false" aria-label="2 - Parfois">2</button><button type="button" data-v="3" aria-pressed="false" aria-label="3 - Assez souvent">3</button><button type="button" data-v="4" aria-pressed="false" aria-label="4 - Très souvent">4</button></div><div class="chosen" aria-live="polite"></div></div><div class="q" data-q="2"><div class="lbl"><span class="n">2</span><span>à quelle fréquence avez-vous senti que vous étiez incapable de contrôler les choses importantes de votre vie ?</span></div><div class="opts" role="group"><button type="button" data-v="0" aria-pressed="false" aria-label="0 - Jamais">0</button><button type="button" data-v="1" aria-pressed="false" aria-label="1 - Presque jamais">1</button><button type="button" data-v="2" aria-pressed="false" aria-label="2 - Parfois">2</button><button type="button" data-v="3" aria-pressed="false" aria-label="3 - Assez souvent">3</button><button type="button" data-v="4" aria-pressed="false" aria-label="4 - Très souvent">4</button></div><div class="chosen" aria-live="polite"></div></div><div class="q" data-q="3"><div class="lbl"><span class="n">3</span><span>à quelle fréquence vous êtes-vous senti nerveux et « stressé » ?</span></div><div class="opts" role="group"><button type="button" data-v="0" aria-pressed="false" aria-label="0 - Jamais">0</button><button type="button" data-v="1" aria-pressed="false" aria-label="1 - Presque jamais">1</button><button type="button" data-v="2" aria-pressed="false" aria-label="2 - Parfois">2</button><button type="button" data-v="3" aria-pressed="false" aria-label="3 - Assez souvent">3</button><button type="button" data-v="4" aria-pressed="false" aria-label="4 - Très souvent">4</button></div><div class="chosen" aria-live="polite"></div></div><div class="q" data-q="4"><div class="lbl"><span class="n">4</span><span>à quelle fréquence vous êtes-vous senti confiant quant à votre capacité à gérer vos problèmes personnels ?</span></div><div class="opts" role="group"><button type="button" data-v="0" aria-pressed="false" aria-label="0 - Jamais">0</button><button type="button" data-v="1" aria-pressed="false" aria-label="1 - Presque jamais">1</button><button type="button" data-v="2" aria-pressed="false" aria-label="2 - Parfois">2</button><button type="button" data-v="3" aria-pressed="false" aria-label="3 - Assez souvent">3</button><button type="button" data-v="4" aria-pressed="false" aria-label="4 - Très souvent">4</button></div><div class="chosen" aria-live="polite"></div></div><div class="q" data-q="5"><div class="lbl"><span class="n">5</span><span>à quelle fréquence avez-vous senti que les choses allaient comme vous le souhaitiez ?</span></div><div class="opts" role="group"><button type="button" data-v="0" aria-pressed="false" aria-label="0 - Jamais">0</button><button type="button" data-v="1" aria-pressed="false" aria-label="1 - Presque jamais">1</button><button type="button" data-v="2" aria-pressed="false" aria-label="2 - Parfois">2</button><button type="button" data-v="3" aria-pressed="false" aria-label="3 - Assez souvent">3</button><button type="button" data-v="4" aria-pressed="false" aria-label="4 - Très souvent">4</button></div><div class="chosen" aria-live="polite"></div></div><div class="q" data-q="6"><div class="lbl"><span class="n">6</span><span>combien de fois avez-vous constaté que vous ne pouviez pas faire face à toutes les choses que vous deviez faire ?</span></div><div class="opts" role="group"><button type="button" data-v="0" aria-pressed="false" aria-label="0 - Jamais">0</button><button type="button" data-v="1" aria-pressed="false" aria-label="1 - Presque jamais">1</button><button type="button" data-v="2" aria-pressed="false" aria-label="2 - Parfois">2</button><button type="button" data-v="3" aria-pressed="false" aria-label="3 - Assez souvent">3</button><button type="button" data-v="4" aria-pressed="false" aria-label="4 - Très souvent">4</button></div><div class="chosen" aria-live="polite"></div></div><div class="q" data-q="7"><div class="lbl"><span class="n">7</span><span>à quelle fréquence avez-vous réussi à contrôler les irritations dans votre vie ?</span></div><div class="opts" role="group"><button type="button" data-v="0" aria-pressed="false" aria-label="0 - Jamais">0</button><button type="button" data-v="1" aria-pressed="false" aria-label="1 - Presque jamais">1</button><button type="button" data-v="2" aria-pressed="false" aria-label="2 - Parfois">2</button><button type="button" data-v="3" aria-pressed="false" aria-label="3 - Assez souvent">3</button><button type="button" data-v="4" aria-pressed="false" aria-label="4 - Très souvent">4</button></div><div class="chosen" aria-live="polite"></div></div><div class="q" data-q="8"><div class="lbl"><span class="n">8</span><span>à quelle fréquence avez-vous eu l'impression de contrôler les choses ?</span></div><div class="opts" role="group"><button type="button" data-v="0" aria-pressed="false" aria-label="0 - Jamais">0</button><button type="button" data-v="1" aria-pressed="false" aria-label="1 - Presque jamais">1</button><button type="button" data-v="2" aria-pressed="false" aria-label="2 - Parfois">2</button><button type="button" data-v="3" aria-pressed="false" aria-label="3 - Assez souvent">3</button><button type="button" data-v="4" aria-pressed="false" aria-label="4 - Très souvent">4</button></div><div class="chosen" aria-live="polite"></div></div><div class="q" data-q="9"><div class="lbl"><span class="n">9</span><span>à quelle fréquence avez-vous été mis en colère à cause de choses qui échappaient à votre contrôle ?</span></div><div class="opts" role="group"><button type="button" data-v="0" aria-pressed="false" aria-label="0 - Jamais">0</button><button type="button" data-v="1" aria-pressed="false" aria-label="1 - Presque jamais">1</button><button type="button" data-v="2" aria-pressed="false" aria-label="2 - Parfois">2</button><button type="button" data-v="3" aria-pressed="false" aria-label="3 - Assez souvent">3</button><button type="button" data-v="4" aria-pressed="false" aria-label="4 - Très souvent">4</button></div><div class="chosen" aria-live="polite"></div></div><div class="q" data-q="10"><div class="lbl"><span class="n">10</span><span>combien de fois avez-vous eu l'impression que les difficultés s'accumulaient tellement que vous ne parveniez pas à les surmonter ?</span></div><div class="opts" role="group"><button type="button" data-v="0" aria-pressed="false" aria-label="0 - Jamais">0</button><button type="button" data-v="1" aria-pressed="false" aria-label="1 - Presque jamais">1</button><button type="button" data-v="2" aria-pressed="false" aria-label="2 - Parfois">2</button><button type="button" data-v="3" aria-pressed="false" aria-label="3 - Assez souvent">3</button><button type="button" data-v="4" aria-pressed="false" aria-label="4 - Très souvent">4</button></div><div class="chosen" aria-live="polite"></div></div><div class="card"><h2>Comment le score est calculé</h2><p>Quatre questions se comptent à l'envers : les questions 4, 5, 7 et 8. Pour ces quatre questions seulement, la note est remplacée : 0 devient 4, 1 devient 3, 2 reste 2, 3 devient 1, 4 devient 0. Les dix notes sont ensuite additionnées. Le calcul est fait automatiquement ci-dessous.</p></div><div class="res" id="res"><div class="card"><h2>Mon résultat</h2><div class="score"><div class="big" id="sc">0</div><div class="sur">sur 40</div><div class="pal" id="pal"></div></div><p id="txt"></p></div><div class="card"><h2>Les trois paliers</h2><p><b>0 à 13 - Stress perçu faible.</b> Vous vous sentez globalement en prise sur votre quotidien.</p><p><b>14 à 26 - Stress perçu modéré.</b> Certaines situations vous échappent. C'est le score le plus fréquent.</p><p><b>27 à 40 - Stress perçu élevé.</b> Vous vivez beaucoup de situations comme imprévisibles et hors de votre contrôle.</p></div><div class="card"><h2>Le détail de mes notes</h2><p>Les questions 4, 5, 7 et 8 sont comptées à l'envers.</p><div id="det"></div></div><button class="again" type="button" onclick="reset()">Recommencer</button></div><footer><p>D'après le livret d'exercices Université Évry Paris-Saclay - mise en forme numérique 23 MindSet - Fares ATBA</p><p>Source : Cohen S., Williamson G. (1988), version à 10 items de l'échelle de Cohen, Kamarck et Mermelstein (1983).</p><p>Vos réponses restent sur votre téléphone. Rien n'est enregistré, rien n'est envoyé.</p><p>&copy; 2026 - 23 MindSet - Fares ATBA</p></footer></div><div class="go"><div class="in"><button id="go" type="button" disabled>Voir mon résultat</button></div></div>
+<button class="tog" id="tog" type="button" aria-label="Changer l'affichage">☀</button>
+<script>
+(function(){
+ var b=document.getElementById('tog');
+ function cur(){var a=document.documentElement.getAttribute('data-theme');
+   if(a)return a;
+   try{return window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}catch(e){return 'dark';}}
+ function paint(){var d=cur()==='dark';
+   b.textContent=d?'☀':'☾';
+   b.setAttribute('aria-label',d?'Passer en affichage clair':'Passer en affichage sombre');
+   b.setAttribute('title',b.getAttribute('aria-label'));}
+ b.addEventListener('click',function(){var n=cur()==='dark'?'light':'dark';
+   document.documentElement.setAttribute('data-theme',n);
+   try{localStorage.setItem('ef-theme',n);}catch(e){}paint();});
+ paint();
+ try{window.matchMedia('(prefers-color-scheme: light)').addEventListener('change',paint);}catch(e){}
+})();
+
+var LAB=["Jamais","Presque jamais","Parfois","Assez souvent","Très souvent"], NQ=10, ans={};
+function up(){var n=Object.keys(ans).length;
+  document.getElementById('pc').textContent=n;
+  document.getElementById('pb').style.width=(100*n/NQ)+'%';
+  document.getElementById('go').disabled=(n<NQ);}
+document.querySelectorAll('.q').forEach(function(q){
+  var id=q.getAttribute('data-q'), ch=q.querySelector('.chosen');
+  q.querySelectorAll('.opts button').forEach(function(b){
+    b.addEventListener('click',function(){
+      q.querySelectorAll('.opts button').forEach(function(x){x.setAttribute('aria-pressed','false');});
+      b.setAttribute('aria-pressed','true');
+      ans[id]=parseInt(b.getAttribute('data-v'),10);
+      if(LAB)ch.textContent=LAB[ans[id]];
+      up();});});});
+function reset(){ans={};
+  document.querySelectorAll('.opts button').forEach(function(b){b.setAttribute('aria-pressed','false');});
+  document.querySelectorAll('.chosen').forEach(function(c){c.textContent='';});
+  document.getElementById('res').classList.remove('on');
+  document.body.classList.remove('done');
+  document.getElementById('go').textContent=GOTXT;
+  up();window.scrollTo(0,0);}
+up();
+
+var GOTXT='Voir mon résultat', INV=[4,5,7,8];
+var PAL=[[0,13,"Stress perçu faible","Vous vous sentez globalement en prise sur votre quotidien."],[14,26,"Stress perçu modéré","Certaines situations vous échappent. C'est le score le plus fréquent."],[27,40,"Stress perçu élevé","Vous vivez beaucoup de situations comme imprévisibles et hors de votre contrôle."]];
+document.getElementById('go').addEventListener('click',function(){
+  var tot=0,d='';
+  for(var i=1;i<=10;i++){var raw=ans[i],v=(INV.indexOf(i)>=0)?(4-raw):raw;tot+=v;
+    d+='<div class="sub"><div class="nm">Question '+i+(INV.indexOf(i)>=0?' (inversée)':'')+
+       '</div><div class="tr"><i style="width:'+(100*v/4)+'%"></i></div>'+
+       '<div class="vl">'+raw+' &rarr; '+v+'</div></div>';}
+  document.getElementById('sc').textContent=tot;
+  var p=PAL[0];for(var k=0;k<PAL.length;k++){if(tot>=PAL[k][0]&&tot<=PAL[k][1])p=PAL[k];}
+  document.getElementById('pal').textContent=p[2];
+  document.getElementById('txt').textContent=p[3];
+  document.getElementById('det').innerHTML='<div class="subs">'+d+'</div>';
+  document.getElementById('res').classList.add('on');
+  document.body.classList.add('done');
+  this.textContent='Résultat affiché ci-dessous';
+  document.getElementById('res').scrollIntoView({behavior:'smooth'});});
+</script>
+</body>
+</html>
